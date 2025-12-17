@@ -5,7 +5,7 @@ services:
     env: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    plan: starter
+    plan: free
     region: oregon
     envVars:
       - key: NODE_ENV
@@ -46,7 +46,7 @@ services:
     env: docker
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
-    plan: starter
+    plan: free
     region: oregon
     envVars:
       - key: NODE_ENV
@@ -62,7 +62,7 @@ services:
 databases:
   # PostgreSQL Database
   - name: fanhouse-db
-    plan: starter
+    plan: free
     region: oregon
     databaseName: fanhouse
     user: fanhouse
