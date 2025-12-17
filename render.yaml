@@ -16,11 +16,9 @@ services:
         fromDatabase:
           name: fanhouse-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          name: fanhouse-redis
-          type: redis
-          property: connectionString
+      # REDIS_URL: Create Redis manually and set this environment variable
+      # - key: REDIS_URL
+      #   sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
