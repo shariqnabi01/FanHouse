@@ -217,7 +217,7 @@ router.post('/unlock-ppv', authenticate, async (req: AuthRequest, res) => {
       creatorId: post.creator_id,
       postId: post_id,
       amount: parseFloat(post.ppv_price),
-      ccbillTransactionId: checkout.transactionId,
+      ccbillTransactionId: 'transactionId' in checkout ? checkout.transactionId : checkout.sessionId || 'unknown',
       metadata: { unlockId: unlockResult.rows[0].id },
     });
 
