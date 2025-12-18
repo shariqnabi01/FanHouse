@@ -124,7 +124,7 @@ router.post('/subscribe', authenticate, async (req: AuthRequest, res) => {
       fanId: req.userId!,
       creatorId: creator_id,
       amount: parseFloat(amount),
-      ccbillTransactionId: checkout.transactionId,
+      ccbillTransactionId: 'transactionId' in checkout ? checkout.transactionId : checkout.sessionId || 'unknown',
       metadata: { subscriptionId: subResult.rows[0].id },
     });
 

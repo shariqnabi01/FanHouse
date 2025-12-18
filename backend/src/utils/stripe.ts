@@ -8,7 +8,7 @@ function getStripeClient(): Stripe | null {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (secretKey) {
       stripeClient = new Stripe(secretKey, {
-        apiVersion: '2024-11-20.acacia',
+        apiVersion: '2023-10-16',
       });
       console.log('[Stripe] Initialized with', secretKey.startsWith('sk_test') ? 'TEST mode' : 'LIVE mode');
     }

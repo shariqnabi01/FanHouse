@@ -23,7 +23,7 @@ export function getAblyClient(): Ably.Realtime {
             },
           }),
         },
-      } as any;
+      } as Ably.Realtime;
     }
   }
   return ablyClient;
