@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.onrender.com',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
     ],
   },
   output: 'standalone',
