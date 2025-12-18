@@ -53,13 +53,21 @@ export default function CreatorPage() {
   }, [user, authLoading]);
 
   const fetchPosts = async () => {
+    // Only fetch posts if creator is approved and has a creator ID
+    if (!user?.creator?.id || user?.creator?.verification_status !== 'approved') {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await api.get<{ posts: Post[] }>('/content', {
-        params: { creator_id: user?.creator?.id },
+        params: { creator_id: user.creator.id },
       });
       setPosts(response.data.posts);
     } catch (error) {
       console.error('Failed to fetch posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -220,9 +228,10 @@ export default function CreatorPage() {
           </Card>
         )}
 
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold">Your Posts</h2>
-          {posts.map((post) => (
+        {(verificationStatus === 'approved' || posts.length > 0) && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Your Posts</h2>
+            {posts.map((post) => (
             <Card key={post.id}>
               <CardHeader>
                 <CardTitle>
@@ -246,11 +255,12 @@ export default function CreatorPage() {
                 </p>
               </CardContent>
             </Card>
-          ))}
-          {posts.length === 0 && (
-            <p className="text-center text-gray-500">No posts yet</p>
-          )}
-        </div>
+            ))}
+            {posts.length === 0 && verificationStatus === 'approved' && (
+              <p className="text-center text-gray-500">No posts yet. Create your first post!</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
