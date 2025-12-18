@@ -2,7 +2,6 @@ services:
   # Backend API Service
   - type: web
     name: fanhouse-backend
-    env: docker
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
     plan: free
@@ -41,7 +40,6 @@ services:
   # Frontend Web Service
   - type: web
     name: fanhouse-frontend
-    env: docker
     dockerfilePath: frontend/Dockerfile
     dockerContext: frontend
     plan: free
