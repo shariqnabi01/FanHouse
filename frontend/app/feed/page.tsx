@@ -201,9 +201,11 @@ export default function FeedPage() {
                         onError={(e) => {
                           console.error('Image load error:', post.media_url);
                           // Fallback to direct URL if API endpoint fails
+                          if (!post.media_url) return;
                           const target = e.target as HTMLImageElement;
                           if (!target.src.includes('/uploads/')) {
-                            target.src = `${getMediaUrl(post.media_url).replace('/api/content/media/', '/uploads/')}`;
+                            const mediaUrl = getMediaUrl(post.media_url);
+                            target.src = mediaUrl.replace('/api/content/media/', '/uploads/');
                           }
                         }}
                       />
