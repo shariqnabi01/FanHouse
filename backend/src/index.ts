@@ -27,10 +27,17 @@ app.use(cors({
 app.use(express.json());
 
 // Serve static files with explicit route handler to avoid ORB issues
-app.get('/uploads/*', (req, res) => {
-  // Extract filename from path (everything after /uploads/)
-  const filename = req.path.replace('/uploads/', '');
+// Use catch-all route for uploads
+app.get('/uploads/:filename(*)', (req, res) => {
+  const filename = req.params.filename;
   const filePath = path.join(process.cwd(), 'uploads', filename);
+  
+  // Security: prevent directory traversal
+  const resolvedPath = path.resolve(filePath);
+  const uploadsDir = path.resolve(process.cwd(), 'uploads');
+  if (!resolvedPath.startsWith(uploadsDir)) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
   
   // Check if file exists
   if (!fs.existsSync(filePath)) {
@@ -52,11 +59,13 @@ app.get('/uploads/*', (req, res) => {
 
   const contentType = contentTypes[ext] || 'application/octet-stream';
 
-  // Set headers
+  // Set headers to prevent ORB blocking
   res.setHeader('Content-Type', contentType);
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Expose-Headers', 'Content-Type');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Cache-Control', 'public, max-age=31536000');
 
   // Send file
