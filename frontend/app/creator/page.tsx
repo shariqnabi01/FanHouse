@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { getApiUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
+import { Loader } from '@/components/loader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -118,8 +119,17 @@ export default function CreatorPage() {
     }
   };
 
-  if (authLoading || loading) {
-    return <div>Loading...</div>;
+  if (authLoading) {
+    return <Loader message="Loading creator dashboard..." />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <Loader fullScreen={false} message="Loading your posts..." />
+      </div>
+    );
   }
 
   const verificationStatus = user?.creator?.verification_status;

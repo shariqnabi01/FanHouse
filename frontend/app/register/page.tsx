@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader } from '@/components/loader';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -32,6 +33,10 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <Loader message="Creating your account..." />;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-purple-50 p-4 py-12">

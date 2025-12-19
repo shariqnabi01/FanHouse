@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { getApiUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
+import { Loader } from '@/components/loader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -31,7 +32,9 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (authLoading) return;
+    
+    if (!user) {
       router.push('/login');
       return;
     }
@@ -40,7 +43,7 @@ export default function FeedPage() {
       return;
     }
     fetchPosts();
-  }, [user, authLoading]);
+  }, [user, authLoading, router]);
 
   const fetchPosts = async () => {
     try {
@@ -98,21 +101,15 @@ export default function FeedPage() {
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
+    return <Loader message="Loading your feed..." />;
+  }
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
         <Navbar />
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-2xl mx-auto space-y-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm p-6 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-48 bg-gray-200 rounded mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Loader fullScreen={false} message="Loading posts..." />
       </div>
     );
   }

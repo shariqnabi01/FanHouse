@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { Loader } from '@/components/loader';
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -22,6 +23,10 @@ export default function Home() {
     }
   }, [user, loading, router]);
 
-  return <div>Loading...</div>;
+  if (loading) {
+    return <Loader message="Initializing FanHouse..." />;
+  }
+
+  return <Loader message="Redirecting..." />;
 }
 
