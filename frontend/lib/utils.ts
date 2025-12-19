@@ -1,3 +1,11 @@
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+// Utility function to merge Tailwind classes
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
 // Utility function to get API URL (works at runtime)
 export function getApiUrl(): string {
   // Client-side: check if we're on Render
