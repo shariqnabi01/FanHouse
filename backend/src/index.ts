@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 import { pool } from './db/index.js';
 import authRoutes from './routes/auth.js';
 import creatorRoutes from './routes/creator.js';
@@ -14,38 +16,50 @@ dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
-app.use(cors());
+// Configure CORS to allow all origins
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type'],
+}));
+
 app.use(express.json());
 
-// Serve static files with proper CORS and Content-Type headers
-app.use('/uploads', (req, res, next) => {
-  // Set CORS headers for static files
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-}, express.static('uploads', {
-  setHeaders: (res, path) => {
-    // Set proper Content-Type based on file extension
-    if (path.endsWith('.png')) {
-      res.setHeader('Content-Type', 'image/png');
-    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
-      res.setHeader('Content-Type', 'image/jpeg');
-    } else if (path.endsWith('.gif')) {
-      res.setHeader('Content-Type', 'image/gif');
-    } else if (path.endsWith('.webp')) {
-      res.setHeader('Content-Type', 'image/webp');
-    } else if (path.endsWith('.mp4')) {
-      res.setHeader('Content-Type', 'video/mp4');
-    } else if (path.endsWith('.webm')) {
-      res.setHeader('Content-Type', 'video/webm');
-    } else if (path.endsWith('.mov')) {
-      res.setHeader('Content-Type', 'video/quicktime');
-    }
-    // Set cache control
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
+// Serve static files with explicit route handler to avoid ORB issues
+app.get('/uploads/*', (req, res) => {
+  const filePath = path.join(process.cwd(), 'uploads', req.params[0] || req.path.replace('/uploads/', ''));
+  
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'File not found' });
   }
-}));
+
+  // Determine Content-Type based on file extension
+  const ext = path.extname(filePath).toLowerCase();
+  const contentTypes: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.mp4': 'video/mp4',
+    '.webm': 'video/webm',
+    '.mov': 'video/quicktime',
+  };
+
+  const contentType = contentTypes[ext] || 'application/octet-stream';
+
+  // Set headers
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Type');
+  res.setHeader('Cache-Control', 'public, max-age=31536000');
+
+  // Send file
+  res.sendFile(filePath);
+});
 
 // Health check
 app.get('/health', async (req, res) => {
