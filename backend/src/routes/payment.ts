@@ -138,7 +138,16 @@ router.post('/subscribe', authenticate, async (req: AuthRequest, res) => {
     res.json({ subscription: subResult.rows[0], payment: checkout });
   } catch (error: any) {
     console.error('Subscribe error:', error);
-    res.status(500).json({ error: 'Failed to subscribe' });
+    console.error('Subscribe error stack:', error?.stack);
+    console.error('Subscribe error details:', {
+      message: error?.message,
+      code: error?.code,
+      name: error?.name,
+    });
+    res.status(500).json({ 
+      error: 'Failed to subscribe',
+      details: process.env.NODE_ENV === 'development' ? error?.message : undefined
+    });
   }
 });
 
