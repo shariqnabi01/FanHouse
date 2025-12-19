@@ -28,7 +28,9 @@ app.use(express.json());
 
 // Serve static files with explicit route handler to avoid ORB issues
 app.get('/uploads/*', (req, res) => {
-  const filePath = path.join(process.cwd(), 'uploads', req.params[0] || req.path.replace('/uploads/', ''));
+  // Extract filename from path (everything after /uploads/)
+  const filename = req.path.replace('/uploads/', '');
+  const filePath = path.join(process.cwd(), 'uploads', filename);
   
   // Check if file exists
   if (!fs.existsSync(filePath)) {
