@@ -13,6 +13,8 @@ COPY . .
 
 # Build Next.js app
 ENV NEXT_TELEMETRY_DISABLED=1
+# Note: NEXT_PUBLIC_* env vars must be available at build time
+# Render will inject them during build
 RUN npm run build
 
 # Expose port

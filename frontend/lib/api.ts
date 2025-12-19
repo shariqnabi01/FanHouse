@@ -2,6 +2,12 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+// Debug: Log the API URL (only in browser)
+if (typeof window !== 'undefined') {
+  console.log('[API] Using API URL:', API_URL);
+  console.log('[API] Full base URL:', `${API_URL}/api`);
+}
+
 const api = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
