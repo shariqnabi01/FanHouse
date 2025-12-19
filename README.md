@@ -2,6 +2,17 @@
 
 A production-ready vertical slice of an OnlyFans-class creator platform demonstrating authentication, creator onboarding, content gating, payments, real-time features, and admin controls.
 
+## 📹 Video Walkthrough
+
+[Watch the Loom video walkthrough here](YOUR_LOOM_VIDEO_URL)
+
+This video covers:
+- Architecture overview
+- Data model and ledger system
+- API-level access control implementation
+- Mocked integrations with proper state flows
+- Real-time features and deployment
+
 ## Architecture Overview
 
 This project is built as a full-stack application with:
