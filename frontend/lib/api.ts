@@ -1,28 +1,25 @@
 import axios from 'axios';
 
-// Get API URL - check both build-time and runtime
-// For production on Render, use the backend URL
+// Get API URL - auto-detect Render environment
 const getApiUrl = () => {
-  // Check if we're in browser (client-side)
+  // Client-side: check if we're on Render
   if (typeof window !== 'undefined') {
-    // Check if we're on Render (production)
     if (window.location.hostname.includes('onrender.com')) {
-      // Try to get from env var first, then construct from current hostname
+      // Use env var if available, otherwise construct from hostname
       const envUrl = process.env.NEXT_PUBLIC_API_URL;
       if (envUrl && !envUrl.includes('localhost')) {
         return envUrl;
       }
-      // Fallback: construct backend URL from frontend URL
-      // If frontend is fanhouse-frontend.onrender.com, backend should be fanhouse-backend.onrender.com
+      // Auto-detect backend URL from frontend hostname
       const hostname = window.location.hostname;
       if (hostname.includes('fanhouse-frontend')) {
-        return hostname.replace('fanhouse-frontend', 'fanhouse-backend');
+        return `https://${hostname.replace('fanhouse-frontend', 'fanhouse-backend')}`;
       }
-      // Generic fallback for Render
+      // Fallback
       return 'https://fanhouse-backend.onrender.com';
     }
   }
-  // Development or env var available
+  // Development: use env var or localhost
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 };
 
