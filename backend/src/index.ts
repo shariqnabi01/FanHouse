@@ -16,7 +16,36 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+
+// Serve static files with proper CORS and Content-Type headers
+app.use('/uploads', (req, res, next) => {
+  // Set CORS headers for static files
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+}, express.static('uploads', {
+  setHeaders: (res, path) => {
+    // Set proper Content-Type based on file extension
+    if (path.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    } else if (path.endsWith('.jpg') || path.endsWith('.jpeg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    } else if (path.endsWith('.gif')) {
+      res.setHeader('Content-Type', 'image/gif');
+    } else if (path.endsWith('.webp')) {
+      res.setHeader('Content-Type', 'image/webp');
+    } else if (path.endsWith('.mp4')) {
+      res.setHeader('Content-Type', 'video/mp4');
+    } else if (path.endsWith('.webm')) {
+      res.setHeader('Content-Type', 'video/webm');
+    } else if (path.endsWith('.mov')) {
+      res.setHeader('Content-Type', 'video/quicktime');
+    }
+    // Set cache control
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+  }
+}));
 
 // Health check
 app.get('/health', async (req, res) => {
