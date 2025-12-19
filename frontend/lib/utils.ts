@@ -30,7 +30,7 @@ export function getApiUrl(): string {
 }
 
 // Get media URL - use API endpoint to avoid ORB issues
-export function getMediaUrl(mediaPath: string): string {
+export function getMediaUrl(mediaPath: string | undefined | null): string {
   if (!mediaPath) return '';
   
   // If already a full URL, return as is

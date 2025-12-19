@@ -211,7 +211,7 @@ export default function FeedPage() {
                       />
                     ) : (
                       <video
-                        src={getMediaUrl(post.media_url)}
+                        src={post.media_url ? getMediaUrl(post.media_url) : ''}
                         controls
                         className="w-full h-auto"
                       />
