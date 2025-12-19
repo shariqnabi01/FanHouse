@@ -4,8 +4,56 @@ import { authenticate, requireRole, AuthRequest } from '../middleware/auth.js';
 import { upload } from '../utils/upload.js';
 import { publishEvent } from '../utils/ably.js';
 import { notifyNewPost } from '../utils/knock.js';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
+
+// Serve media files through API to avoid ORB issues
+router.get('/media/:filename(*)', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(process.cwd(), 'uploads', filename);
+  
+  // Security: prevent directory traversal
+  const resolvedPath = path.resolve(filePath);
+  const uploadsDir = path.resolve(process.cwd(), 'uploads');
+  if (!resolvedPath.startsWith(uploadsDir)) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+  
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'File not found' });
+  }
+
+  // Determine Content-Type based on file extension
+  const ext = path.extname(filePath).toLowerCase();
+  const contentTypes: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.mp4': 'video/mp4',
+    '.webm': 'video/webm',
+    '.mov': 'video/quicktime',
+  };
+
+  const contentType = contentTypes[ext] || 'application/octet-stream';
+
+  // Set headers to prevent ORB blocking - CRITICAL
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Type');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Cache-Control', 'public, max-age=31536000');
+
+  // Send file
+  res.sendFile(filePath);
+});
 
 // Create post
 router.post('/', authenticate, requireRole('creator'), upload.single('media'), async (req: AuthRequest, res) => {

@@ -59,13 +59,14 @@ app.get('/uploads/:filename(*)', (req, res) => {
 
   const contentType = contentTypes[ext] || 'application/octet-stream';
 
-  // Set headers to prevent ORB blocking
+  // Set headers to prevent ORB blocking - CRITICAL for cross-origin image loading
   res.setHeader('Content-Type', contentType);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Expose-Headers', 'Content-Type');
   res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Cache-Control', 'public, max-age=31536000');
 
   // Send file

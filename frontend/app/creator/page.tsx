@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { getApiUrl } from '@/lib/utils';
+import { getMediaUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -254,9 +254,17 @@ export default function CreatorPage() {
                 {post.media_url && (
                   <div className="mb-4">
                     <img
-                      src={`${getApiUrl()}${post.media_url}`}
+                      src={getMediaUrl(post.media_url)}
                       alt={post.title || 'Post'}
                       className="w-full rounded-lg max-h-96 object-cover"
+                      onError={(e) => {
+                        console.error('Image load error:', post.media_url);
+                        // Fallback to direct URL if API endpoint fails
+                        const target = e.target as HTMLImageElement;
+                        if (!target.src.includes('/uploads/')) {
+                          target.src = `${getMediaUrl(post.media_url).replace('/api/content/media/', '/uploads/')}`;
+                        }
+                      }}
                     />
                   </div>
                 )}

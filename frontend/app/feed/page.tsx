@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { getApiUrl } from '@/lib/utils';
+import { getMediaUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
 import { Loader } from '@/components/loader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -195,13 +195,21 @@ export default function FeedPage() {
                     <div className="mb-4 rounded-xl overflow-hidden shadow-md">
                       {post.media_type?.startsWith('image') ? (
                       <img
-                        src={`${getApiUrl()}${post.media_url}`}
+                        src={getMediaUrl(post.media_url)}
                         alt={post.title || 'Post media'}
                         className="w-full h-auto object-cover"
+                        onError={(e) => {
+                          console.error('Image load error:', post.media_url);
+                          // Fallback to direct URL if API endpoint fails
+                          const target = e.target as HTMLImageElement;
+                          if (!target.src.includes('/uploads/')) {
+                            target.src = `${getMediaUrl(post.media_url).replace('/api/content/media/', '/uploads/')}`;
+                          }
+                        }}
                       />
                     ) : (
                       <video
-                        src={`${getApiUrl()}${post.media_url}`}
+                        src={getMediaUrl(post.media_url)}
                         controls
                         className="w-full h-auto"
                       />
