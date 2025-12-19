@@ -60,7 +60,13 @@ router.post('/subscribe', authenticate, async (req: AuthRequest, res) => {
     const userEmail = userResult.rows[0]?.email;
 
     // Create checkout session (Stripe) or process mock payment
-    const baseUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'https://fanhouse-frontend.onrender.com' : 'http://localhost:3000');
+    let baseUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'https://fanhouse-frontend.onrender.com' : 'http://localhost:3000');
+    
+    // Ensure baseUrl has protocol
+    if (baseUrl && !baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = `https://${baseUrl}`;
+    }
+    
     const successUrl = `${baseUrl}/payment/success?type=subscription&creator_id=${creator_id}&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/creators`;
 
@@ -138,16 +144,7 @@ router.post('/subscribe', authenticate, async (req: AuthRequest, res) => {
     res.json({ subscription: subResult.rows[0], payment: checkout });
   } catch (error: any) {
     console.error('Subscribe error:', error);
-    console.error('Subscribe error stack:', error?.stack);
-    console.error('Subscribe error details:', {
-      message: error?.message,
-      code: error?.code,
-      name: error?.name,
-    });
-    res.status(500).json({ 
-      error: 'Failed to subscribe',
-      details: process.env.NODE_ENV === 'development' ? error?.message : undefined
-    });
+    res.status(500).json({ error: 'Failed to subscribe' });
   }
 });
 
@@ -195,7 +192,13 @@ router.post('/unlock-ppv', authenticate, async (req: AuthRequest, res) => {
     const userEmail = userResult.rows[0]?.email;
 
     // Create checkout session (Stripe) or process mock payment
-    const baseUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'https://fanhouse-frontend.onrender.com' : 'http://localhost:3000');
+    let baseUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'https://fanhouse-frontend.onrender.com' : 'http://localhost:3000');
+    
+    // Ensure baseUrl has protocol
+    if (baseUrl && !baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = `https://${baseUrl}`;
+    }
+    
     const successUrl = `${baseUrl}/payment/success?type=ppv&post_id=${post_id}&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${baseUrl}/feed`;
 
