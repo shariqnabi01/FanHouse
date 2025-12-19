@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { getApiUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -243,7 +244,7 @@ export default function CreatorPage() {
                 {post.media_url && (
                   <div className="mb-4">
                     <img
-                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${post.media_url}`}
+                      src={`${getApiUrl()}${post.media_url}`}
                       alt={post.title || 'Post'}
                       className="w-full rounded-lg max-h-96 object-cover"
                     />

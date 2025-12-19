@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { getApiUrl } from '@/lib/utils';
 import { Navbar } from '@/components/navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -197,13 +198,13 @@ export default function FeedPage() {
                     <div className="mb-4 rounded-xl overflow-hidden shadow-md">
                       {post.media_type?.startsWith('image') ? (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${post.media_url}`}
+                        src={`${getApiUrl()}${post.media_url}`}
                         alt={post.title || 'Post media'}
                         className="w-full h-auto object-cover"
                       />
                     ) : (
                       <video
-                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${post.media_url}`}
+                        src={`${getApiUrl()}${post.media_url}`}
                         controls
                         className="w-full h-auto"
                       />
