@@ -4,9 +4,9 @@ A production-ready vertical slice of an OnlyFans-class creator platform demonstr
 
 ## Video Walkthrough
 
-> **Note:** Replace the link below with your actual Loom video URL once you've created the walkthrough video.
 
-[Watch the Loom video walkthrough here](https://www.loom.com/share/YOUR_VIDEO_ID_HERE)
+
+[Watch the Loom video walkthrough here](https://www.loom.com/share/a64bb4978efa49188497ca1bec8866b0)
 
 This video should cover:
 - Architecture overview
